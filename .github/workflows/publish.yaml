@@ -16,7 +16,7 @@ jobs:
       - name: Setup prod dependencies
         run: composer install --no-dev --no-scripts --no-plugins
       - name: Warmup cache
-        run: php bin/console cache:warmup --env=prod
+        run: ls -lah && php bin/console cache:warmup --env=prod
       - name: Deploy
         env:
           AWS_REGION: eu-central-1
