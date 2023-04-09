@@ -229,8 +229,6 @@ resources:
     BabyTrackerApiUrl:
       Description: The API url of Baby Tracker
       Value: !GetAtt HttpApi.ApiEndpoint
-      Export:
-        Name: BabyTrackerApiUrl
 
 package:
   patterns:
