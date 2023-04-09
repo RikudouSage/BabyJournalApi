@@ -43,7 +43,7 @@ custom:
   Subnet1Cidr: 10.${self:custom.VpcIpDigit}.0.0/24
   Subnet2Cidr: 10.${self:custom.VpcIpDigit}.1.0/24
   Subnet3Cidr: 10.${self:custom.VpcIpDigit}.2.0/24
-  DomainName: ${env:APP_DOMAIN}
+  Domain: ${env:APP_DOMAIN}
   DomainHostedZone: ${env:APP_DOMAIN_HOSTED_ZONE}
 
 functions:
