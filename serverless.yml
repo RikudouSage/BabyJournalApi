@@ -235,6 +235,31 @@ resources:
           - DomainName: ${self:custom.Domain}
             HostedZoneId: ${self:custom.DomainHostedZone}
         ValidationMethod: DNS
+    ApiGatewayDomainName:
+      Type: AWS::ApiGatewayV2::DomainName
+      Properties:
+        DomainName: ${self:custom.Domain}
+        DomainNameConfigurations:
+          - CertificateArn: !Ref Certificate
+            EndpointType: REGIONAL
+    ApiGatewayDomainMapping:
+      DependsOn:
+        - ApiGatewayDomainName
+      Type: AWS::ApiGatewayV2::ApiMapping
+      Properties:
+        ApiId: !Ref HttpApi
+        DomainName: ${self:custom.Domain}
+        Stage: !Ref HttpApiStage
+    DnsRecords:
+      Type: AWS::Route53::RecordSetGroup
+      Properties:
+        HostedZoneId: ${self:custom.DomainHostedZone}
+        RecordSets:
+          - AliasTarget:
+              DNSName: !GetAtt ApiGatewayDomainName.RegionalDomainName
+              HostedZoneId: !GetAtt ApiGatewayDomainName.RegionalHostedZoneId
+            Name: ${self:custom.Domain}
+            Type: A
 
   Outputs:
     BabyTrackerApiUrl:
