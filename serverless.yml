@@ -1,47 +1,247 @@
 # Read the documentation at https://www.serverless.com/framework/docs/providers/aws/guide/serverless.yml/
 service: BabyTrackerApi
+frameworkVersion: '^3.28.0'
 
 provider:
-    name: aws
-    # The AWS region in which to deploy (us-east-1 is the default)
-    region: ${opt:region, env:AWS_REGION}
-    # The stage of the application, e.g. dev, production, staging… ('dev' is the default)
-    stage: ${opt:stage, 'dev'}
-    runtime: provided.al2
-    environment:
-        APP_ENV: ${self:provider.stage}
+  name: aws
+  # The AWS region in which to deploy (us-east-1 is the default)
+  region: ${opt:region, env:AWS_REGION}
+  # The stage of the application, e.g. dev, production, staging… ('dev' is the default)
+  stage: ${opt:stage, 'dev'}
+  runtime: provided.al2
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Resource: !GetAtt CacheTable.Arn
+          Action:
+            - dynamodb:DescribeTable
+            - dynamodb:Query
+            - dynamodb:Scan
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+        - Effect: Allow
+          Resource: '*'
+          Action:
+            - ec2:CreateNetworkInterface
+            - ec2:DescribeNetworkInterfaces
+            - ec2:DeleteNetworkInterface
+  environment:
+    APP_ENV: ${self:provider.stage}
+    APP_SECRET: !Join [ '', [ '{{resolve:secretsmanager:', !Ref AppSecret, ':SecretString:secret}}' ] ]
+    DATABASE_URL: !Join ['', ['mysql://', !Join ['', ['{{resolve:secretsmanager:', !Ref DatabaseCredentials, ':SecretString:username}}']], ':', !Join ['', ['{{resolve:secretsmanager:', !Ref DatabaseCredentials, ':SecretString:password}}']], '@', !GetAtt DatabaseCluster.Endpoint.Address, ':3306/app']]
+    DYNAMODB_CACHE_TABLE: !Ref CacheTable
 
 plugins:
-    - ./vendor/bref/bref
+  - ./vendor/bref/bref
+
+custom:
+  VpcIpDigit: ${env:VPC_IP_DIGIT, '5̈́'}
+  VpcCidr: 10.${self:custom.VpcIpDigit}.0.0/16
+  Subnet1Cidr: 10.${self:custom.VpcIpDigit}.0.0/24
+  Subnet2Cidr: 10.${self:custom.VpcIpDigit}.1.0/24
+  Subnet3Cidr: 10.${self:custom.VpcIpDigit}.2.0/24
 
 functions:
-    # This function runs the Symfony website/API
-    web:
-        handler: public/index.php
-        timeout: 28 # in seconds (API Gateway has a timeout of 29 seconds)
-        layers:
-            - ${bref:layer.php-82-fpm}
-        events:
-            - httpApi: '*'
+  # This function runs the Symfony website/API
+  web:
+    handler: public/index.php
+    timeout: 28 # in seconds (API Gateway has a timeout of 29 seconds)
+    vpc:
+      securityGroupIds:
+        - !GetAtt ServerlessVPC.DefaultSecurityGroup
+      subnetIds:
+        - !Ref PrivateSubnetA
+        - !Ref PrivateSubnetB
+        - !Ref PrivateSubnetC
+    layers:
+      - ${bref:layer.php-82-fpm}
+    events:
+      - httpApi: '*'
 
-    # This function let us run console commands in Lambda
-    console:
-        handler: bin/console
-        timeout: 120 # in seconds
-        layers:
-            - ${bref:layer.php-82} # PHP
-            - ${bref:layer.console} # The "console" layer
+  # This function let us run console commands in Lambda
+  console:
+    handler: bin/console
+    timeout: 120 # in seconds
+    vpc:
+      securityGroupIds:
+        - !GetAtt ServerlessVPC.DefaultSecurityGroup
+      subnetIds:
+        - !Ref PrivateSubnetA
+        - !Ref PrivateSubnetB
+        - !Ref PrivateSubnetC
+    layers:
+      - ${bref:layer.php-82} # PHP
+      - ${bref:layer.console} # The "console" layer
+
+resources:
+  Resources:
+    AppSecret:
+      Type: AWS::SecretsManager::Secret
+      Properties:
+        Description: Baby tracker api service app secret
+        GenerateSecretString:
+          SecretStringTemplate: '{}'
+          GenerateStringKey: "secret"
+          PasswordLength: 32
+          RequireEachIncludedType: true
+          ExcludeUppercase: true
+          ExcludePunctuation: true
+          ExcludeCharacters: ghijklmnopqrstuvwxyz
+    DatabaseCredentials:
+      Type: AWS::SecretsManager::Secret
+      Properties:
+        Description: Baby tracker DB credentials
+        GenerateSecretString:
+          SecretStringTemplate: '{"username": "app"}'
+          GenerateStringKey: "password"
+          PasswordLength: 30
+          ExcludePunctuation: true
+    DatabaseSubnetGroup:
+      Type: AWS::RDS::DBSubnetGroup
+      Properties:
+        DBSubnetGroupDescription: Baby Tracker DB Subnet Group
+        SubnetIds:
+          - !Ref PrivateSubnetA
+          - !Ref PrivateSubnetB
+          - !Ref PrivateSubnetC
+        Tags:
+          - Key: Name
+            Value: ${self:resources.Resources.DatabaseSubnetGroup.Properties.DBSubnetGroupDescription}
+    DatabaseCredentialsAttachment:
+      Type: AWS::SecretsManager::SecretTargetAttachment
+      Properties:
+        SecretId: !Ref DatabaseCredentials
+        TargetId: !Ref DatabaseCluster
+        TargetType: AWS::RDS::DBCluster
+    DatabaseCluster:
+      Type: AWS::RDS::DBCluster
+      Properties:
+        BackupRetentionPeriod: 5
+        Engine: aurora-mysql
+        EngineVersion: 8.0.mysql_aurora.3.03.0
+        DatabaseName: app
+        DBSubnetGroupName: !Ref DatabaseSubnetGroup
+        MasterUsername: !Join [ '', [ '{{resolve:secretsmanager:', !Ref DatabaseCredentials, ':SecretString:username}}' ] ]
+        MasterUserPassword: !Join [ '', [ '{{resolve:secretsmanager:', !Ref DatabaseCredentials, ':SecretString:password}}' ] ]
+        ServerlessV2ScalingConfiguration:
+          MaxCapacity: 8
+          MinCapacity: 0.5
+        StorageEncrypted: true
+        VpcSecurityGroupIds:
+          - !GetAtt ServerlessVPC.DefaultSecurityGroup
+    DatabaseInstance:
+      Type: AWS::RDS::DBInstance
+      Properties:
+        Engine: aurora-mysql
+        DBInstanceClass: db.serverless
+        DBClusterIdentifier: !Ref DatabaseCluster
+    CacheTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        BillingMode: PAY_PER_REQUEST
+        TimeToLiveSpecification:
+          AttributeName: ttl
+          Enabled: true
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+    CacheTableEndpoint:
+      Type: AWS::EC2::VPCEndpoint
+      Properties:
+        ServiceName: com.amazonaws.${self:provider.region}.dynamodb
+        VpcId: !Ref ServerlessVPC
+        RouteTableIds:
+          - !Ref PrivateRouteTable
+        PolicyDocument:
+          Version: '2008-10-17'
+          Statement:
+            - Action: "dynamodb:*"
+              Effect: Allow
+              Resource: !GetAtt CacheTable.Arn
+              Principal: '*'
+    ServerlessVPC:
+      Type: AWS::EC2::VPC
+      Properties:
+        CidrBlock: ${self:custom.VpcCidr}
+        EnableDnsSupport: true
+        EnableDnsHostnames: true
+        InstanceTenancy: default
+        Tags:
+          - Key: Name
+            Value: Baby Tracker VPC
+    PrivateSubnetA:
+      Type: AWS::EC2::Subnet
+      Properties:
+        VpcId: !Ref ServerlessVPC
+        AvailabilityZone: ${self:provider.region}a
+        CidrBlock: ${self:custom.Subnet1Cidr}
+        Tags:
+          - Key: Name
+            Value: Baby Tracker Subnet A
+    PrivateSubnetB:
+      Type: AWS::EC2::Subnet
+      Properties:
+        VpcId: !Ref ServerlessVPC
+        AvailabilityZone: ${self:provider.region}b
+        CidrBlock: ${self:custom.Subnet2Cidr}
+        Tags:
+          - Key: Name
+            Value: Baby Tracker Subnet B
+    PrivateSubnetC:
+      Type: AWS::EC2::Subnet
+      Properties:
+        VpcId: !Ref ServerlessVPC
+        AvailabilityZone: ${self:provider.region}c
+        CidrBlock: ${self:custom.Subnet3Cidr}
+        Tags:
+          - Key: Name
+            Value: Baby Tracker Subnet C
+    PrivateRouteTable:
+      Type: AWS::EC2::RouteTable
+      Properties:
+        VpcId: !Ref ServerlessVPC
+        Tags:
+          - Key: Name
+            Value: Baby Tracker Private Route Table
+    PrivateRouteTableAssociationA:
+      Type: AWS::EC2::SubnetRouteTableAssociation
+      Properties:
+        SubnetId: !Ref PrivateSubnetA
+        RouteTableId: !Ref PrivateRouteTable
+    PrivateRouteTableAssociationB:
+      Type: AWS::EC2::SubnetRouteTableAssociation
+      Properties:
+        SubnetId: !Ref PrivateSubnetB
+        RouteTableId: !Ref PrivateRouteTable
+    PrivateRouteTableAssociationC:
+      Type: AWS::EC2::SubnetRouteTableAssociation
+      Properties:
+        SubnetId: !Ref PrivateSubnetC
+        RouteTableId: !Ref PrivateRouteTable
+
+  Outputs:
+    BabyTrackerApiUrl:
+      Description: The API url of Baby Tracker
+      Value: !GetAtt HttpApi.ApiEndpoint
+      Export:
+        Name: BabyTrackerApiUrl
 
 package:
-    patterns:
-        # Excluded files and folders for deployment
-        - '!assets/**'
-        - '!node_modules/**'
-        - '!public/build/**'
-        - '!tests/**'
-        - '!var/**'
-        # If you want to include files and folders that are part of excluded folders,
-        # add them at the end
-        - 'var/cache/prod/**'
-        - 'public/build/entrypoints.json'
-        - 'public/build/manifest.json'
+  patterns:
+    # Excluded files and folders for deployment
+    - '!assets/**'
+    - '!node_modules/**'
+    - '!public/build/**'
+    - '!tests/**'
+    - '!var/**'
+    # If you want to include files and folders that are part of excluded folders,
+    # add them at the end
+    - 'var/cache/prod/**'
+    - 'public/build/entrypoints.json'
+    - 'public/build/manifest.json'
