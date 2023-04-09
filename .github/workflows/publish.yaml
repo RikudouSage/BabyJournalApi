@@ -14,9 +14,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
       - name: Setup prod dependencies
-        run: composer install --no-dev --no-scripts --no-plugins
+        run: composer install --no-dev --no-scripts
       - name: Warmup cache
-        run: ls -lah && php bin/console cache:warmup --env=prod
+        run: php bin/console cache:warmup --env=prod
       - name: Deploy
         env:
           AWS_REGION: eu-central-1
