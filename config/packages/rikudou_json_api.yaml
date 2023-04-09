@@ -1,0 +1,11 @@
+# Default configuration for extension with alias: "rikudou_json_api"
+rikudou_json_api:
+
+    # The route prefix used with default routing file
+    api_prefix:           ''
+
+    # The paths to scan for auto discovered endpoints
+    auto_discover_paths:
+        - '%kernel.project_dir%/src/Entity'
+
+#    handle_special_exceptions: true
