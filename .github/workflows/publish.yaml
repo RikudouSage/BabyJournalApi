@@ -26,3 +26,5 @@ jobs:
           VPC_IP_DIGIT: '15'
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          APP_DOMAIN_HOSTED_ZONE: ${{ secrets.APP_DOMAIN_HOSTED_ZONE }}
+          APP_DOMAIN: api.baby-journal.app
