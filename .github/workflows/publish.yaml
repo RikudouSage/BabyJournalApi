@@ -18,9 +18,11 @@ jobs:
       - name: Warmup cache
         run: php bin/console cache:warmup --env=prod
       - name: Deploy
+        uses: serverless/github-action@v3
+        with:
+          args: deploy --stage prod --verbose
         env:
           AWS_REGION: eu-central-1
           VPC_IP_DIGIT: '15'
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        run: serverless deploy --stage prod --verbose
