@@ -264,7 +264,7 @@ resources:
   Outputs:
     BabyTrackerApiUrl:
       Description: The API url of Baby Tracker
-      Value: !GetAtt HttpApi.ApiEndpoint
+      Value: https://${self:custom.Domain}
 
 package:
   patterns:
