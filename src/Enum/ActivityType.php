@@ -4,5 +4,6 @@ namespace App\Enum;
 
 enum ActivityType: string
 {
-    case Feeding = 'feeding';
+    case FeedingBottle = 'feedingBottle';
+    case FeedingBreast = 'feedingBreast';
 }

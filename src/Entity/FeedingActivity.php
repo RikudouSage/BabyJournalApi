@@ -30,6 +30,10 @@ class FeedingActivity implements Activity
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $bottleContentType = null;
 
+    #[ApiProperty]
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $breast = null;
+
     public function getType(): ?string
     {
         return $this->type;
@@ -72,11 +76,26 @@ class FeedingActivity implements Activity
             'type' => $this->type,
             'amount' => $this->amount,
             'bottleContentType' => $this->bottleContentType,
+            'breast' => $this->breast,
         ]);
     }
 
     public function getActivityType(): ActivityType
     {
-        return ActivityType::Feeding;
+        return $this->bottleContentType !== null
+            ? ActivityType::FeedingBottle
+            : ActivityType::FeedingBreast;
+    }
+
+    public function getBreast(): ?string
+    {
+        return $this->breast;
+    }
+
+    public function setBreast(?string $breast): self
+    {
+        $this->breast = $breast;
+
+        return $this;
     }
 }
