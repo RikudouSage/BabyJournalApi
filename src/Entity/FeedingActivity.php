@@ -23,7 +23,7 @@ class FeedingActivity implements Activity
     private ?string $type = null;
 
     #[ApiProperty]
-    #[ORM\Column(type: Types::TEXT)]
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $amount = null;
 
     #[ApiProperty]
@@ -47,7 +47,7 @@ class FeedingActivity implements Activity
         return $this->amount;
     }
 
-    public function setAmount(string $amount): self
+    public function setAmount(?string $amount): self
     {
         $this->amount = $amount;
 
