@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\FeedingActivity;
+use App\EntityType\ActivityRepository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -14,7 +15,7 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method FeedingActivity[]    findAll()
  * @method FeedingActivity[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class FeedingActivityRepository extends ServiceEntityRepository
+class FeedingActivityRepository extends ServiceEntityRepository implements ActivityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
