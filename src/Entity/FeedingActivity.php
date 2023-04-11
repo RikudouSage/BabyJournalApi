@@ -82,6 +82,9 @@ class FeedingActivity implements Activity
 
     public function getActivityType(): ActivityType
     {
+        if ($this->bottleContentType === null && $this->breast === null) {
+            return ActivityType::FeedingSolid;
+        }
         return $this->bottleContentType !== null
             ? ActivityType::FeedingBottle
             : ActivityType::FeedingBreast;
