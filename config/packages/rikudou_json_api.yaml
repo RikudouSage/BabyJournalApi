@@ -8,4 +8,4 @@ rikudou_json_api:
     auto_discover_paths:
         - '%kernel.project_dir%/src/Entity'
 
-#    handle_special_exceptions: true
+    handle_special_exceptions: true
