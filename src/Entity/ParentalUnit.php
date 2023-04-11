@@ -25,11 +25,11 @@ class ParentalUnit
     private ?Uuid $id = null;
 
     #[ApiProperty(relation: true)]
-    #[ORM\OneToMany(mappedBy: 'parentalUnit', targetEntity: User::class)]
+    #[ORM\OneToMany(mappedBy: 'parentalUnit', targetEntity: User::class, cascade: ['persist', 'remove'])]
     private Collection $users;
 
     #[ApiProperty(relation: true)]
-    #[ORM\OneToMany(mappedBy: 'parentalUnit', targetEntity: Child::class, orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'parentalUnit', targetEntity: Child::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     private Collection $children;
 
     #[ApiProperty]
