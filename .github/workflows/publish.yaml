@@ -31,3 +31,14 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           APP_DOMAIN_HOSTED_ZONE: ${{ secrets.APP_DOMAIN_HOSTED_ZONE }}
           APP_DOMAIN: api.baby-journal.app
+      - name: Migrations
+        uses: serverless/github-action@v3
+        with:
+          args: bref:cli --stage prod --args="doc:mig:mig -n"
+        env:
+          AWS_REGION: eu-central-1
+          VPC_IP_DIGIT: '15'
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          APP_DOMAIN_HOSTED_ZONE: ${{ secrets.APP_DOMAIN_HOSTED_ZONE }}
+          APP_DOMAIN: api.baby-journal.app
