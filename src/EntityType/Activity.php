@@ -13,8 +13,6 @@ interface Activity
     public function setEndTime(string $endTime): self;
     public function getBreakDuration(): ?string;
     public function setBreakDuration(?string $breakDuration): self;
-    public function getAmount(): ?string;
-    public function setAmount(string $amount): self;
     public function getChild(): ?Child;
     public function setChild(?Child $child): self;
     public function toJson(): array;
