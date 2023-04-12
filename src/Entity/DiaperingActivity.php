@@ -26,6 +26,14 @@ class DiaperingActivity implements Activity
     #[ORM\Column(type: Types::TEXT)]
     private ?string $poopy = null;
 
+    #[ApiProperty]
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $quantity = null;
+
+    #[ApiProperty]
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $poopColor = null;
+
     public function toJson(): array
     {
         return \Rikudou\ArrayMergeRecursive\array_merge_recursive($this->getBaseJson(), [
@@ -59,6 +67,30 @@ class DiaperingActivity implements Activity
     public function setPoopy(?string $poopy): self
     {
         $this->poopy = $poopy;
+
+        return $this;
+    }
+
+    public function getQuantity(): ?string
+    {
+        return $this->quantity;
+    }
+
+    public function setQuantity(?string $quantity): self
+    {
+        $this->quantity = $quantity;
+
+        return $this;
+    }
+
+    public function getPoopColor(): ?string
+    {
+        return $this->poopColor;
+    }
+
+    public function setPoopColor(?string $poopColor): self
+    {
+        $this->poopColor = $poopColor;
 
         return $this;
     }

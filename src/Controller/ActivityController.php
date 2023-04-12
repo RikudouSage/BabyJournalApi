@@ -6,11 +6,13 @@ use App\Entity\Child;
 use App\Entity\FeedingActivity;
 use App\Entity\User;
 use App\EntityType\Activity;
+use App\EntityType\ActivityRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use LogicException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\DependencyInjection\Attribute\TaggedIterator;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -18,10 +20,17 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/activities')]
 final class ActivityController extends AbstractController
 {
+    /**
+     * @param iterable<ActivityRepository> $activityRepositories
+     */
+    public function __construct(
+        #[TaggedIterator('app.activity.repository')]
+        private readonly iterable $activityRepositories,
+    ) {
+    }
+
     #[Route('', name: 'app.activities.list')]
-    public function listActivities(
-        EntityManagerInterface $entityManager,
-    ): JsonResponse {
+    public function listActivities(): JsonResponse {
         $user = $this->getUser();
         if (!$user instanceof User) {
             return new JsonResponse([], Response::HTTP_UNAUTHORIZED);
@@ -31,13 +40,8 @@ final class ActivityController extends AbstractController
             return new JsonResponse([]);
         }
 
-        /** @var EntityRepository[] $repositories */
-        $repositories = [
-            $entityManager->getRepository(FeedingActivity::class),
-        ];
-
         $results = [];
-        foreach ($repositories as $repository) {
+        foreach ($this->activityRepositories as $repository) {
             $results = array_merge($results, $repository->findBy([
                 'child' => $child,
             ]));
