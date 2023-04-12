@@ -22,7 +22,7 @@ trait BasicActivityTrait
     private ?string $startTime = null;
 
     #[ApiProperty]
-    #[ORM\Column(type: Types::TEXT)]
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $endTime = null;
 
     #[ApiProperty]
@@ -60,7 +60,7 @@ trait BasicActivityTrait
         return $this->endTime;
     }
 
-    public function setEndTime(string $endTime): self
+    public function setEndTime(?string $endTime): self
     {
         $this->endTime = $endTime;
 
