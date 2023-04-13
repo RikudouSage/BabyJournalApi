@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\EntityType\Activity;
 use App\EntityType\HasParentalUnit;
 use App\Repository\UserRepository;
 use Doctrine\DBAL\Types\Types;
@@ -38,6 +39,12 @@ class User implements UserInterface, HasParentalUnit
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(onDelete: 'SET NULL')]
     private ?Child $selectedChild = null;
+
+    /**
+     * @var array<class-string<Activity>, string>
+     */
+    #[ORM\Column(nullable: true)]
+    private ?array $newestActivitiesViewed = [];
 
     public function getId(): ?Uuid
     {
@@ -106,6 +113,18 @@ class User implements UserInterface, HasParentalUnit
     public function setSelectedChild(?Child $selectedChild): self
     {
         $this->selectedChild = $selectedChild;
+
+        return $this;
+    }
+
+    public function getNewestActivitiesViewed(): ?array
+    {
+        return $this->newestActivitiesViewed;
+    }
+
+    public function setNewestActivitiesViewed(?array $newestActivitiesViewed): self
+    {
+        $this->newestActivitiesViewed = $newestActivitiesViewed;
 
         return $this;
     }
