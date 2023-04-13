@@ -68,8 +68,18 @@ final class ActivityController extends AbstractController
                 ;
             }
 
+            if (count($activities)) {
+                $last = $activities[array_key_last($activities)];
+                assert($last instanceof Activity);
+                $lastViewed[$repository->getClassName()] = $last->getId();
+            }
+
             $results = array_merge($results, $activities);
         }
+
+        $user->setNewestActivitiesViewed($lastViewed);
+        $entityManager->persist($user);
+        $entityManager->flush();
 
         return new JsonResponse(array_map(function (object $activity) {
             if (!$activity instanceof Activity) {
