@@ -34,12 +34,14 @@ class DiaperingActivity implements Activity
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $poopColor = null;
 
-    public function toJson(): array
+    public function getCustomJson(): array
     {
-        return \Rikudou\ArrayMergeRecursive\array_merge_recursive($this->getBaseJson(), [
+        return [
             'wet' => $this->wet,
             'poopy' => $this->poopy,
-        ]);
+            'quantity' => $this->quantity,
+            'poopColor' => $this->poopColor,
+        ];
     }
 
     public function getActivityType(): ActivityType

@@ -70,14 +70,14 @@ class FeedingActivity implements Activity
         return $this;
     }
 
-    public function toJson(): array
+    protected function getCustomJson(): array
     {
-        return \Rikudou\ArrayMergeRecursive\array_merge_recursive($this->getBaseJson(), [
+        return [
             'type' => $this->type,
             'amount' => $this->amount,
             'bottleContentType' => $this->bottleContentType,
             'breast' => $this->breast,
-        ]);
+        ];
     }
 
     public function getActivityType(): ActivityType

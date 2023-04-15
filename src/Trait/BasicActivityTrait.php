@@ -38,6 +38,8 @@ trait BasicActivityTrait
     #[ORM\JoinColumn(nullable: false)]
     private ?Child $child = null;
 
+    abstract protected function getCustomJson(): array;
+
     public function getId(): ?Uuid
     {
         return $this->id;
@@ -103,6 +105,11 @@ trait BasicActivityTrait
         $this->child = $child;
 
         return $this;
+    }
+
+    public function toJson(): array
+    {
+        return \Rikudou\ArrayMergeRecursive\array_merge_recursive($this->getBaseJson(), $this->getCustomJson());
     }
 
     private function getBaseJson(): array
