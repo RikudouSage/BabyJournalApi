@@ -9,4 +9,5 @@ enum ActivityType: string
     case FeedingSolid = 'feedingSolid';
     case Diapering = 'diapering';
     case Pumping = 'pumping';
+    case Sleeping = 'sleeping';
 }

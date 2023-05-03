@@ -8,6 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Rikudou\JsonApiBundle\Attribute\ApiProperty;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Component\Uid\Uuid;
+use function Rikudou\ArrayMergeRecursive\array_merge_recursive;
 
 trait BasicActivityTrait
 {
@@ -109,7 +110,7 @@ trait BasicActivityTrait
 
     public function toJson(): array
     {
-        return \Rikudou\ArrayMergeRecursive\array_merge_recursive($this->getBaseJson(), $this->getCustomJson());
+        return array_merge_recursive($this->getBaseJson(), $this->getCustomJson());
     }
 
     private function getBaseJson(): array
