@@ -4,9 +4,11 @@ namespace App\Controller;
 
 use App\Entity\ParentalUnit;
 use App\Entity\User;
+use App\Enum\ParentalUnitSetting;
 use App\Repository\ParentalUnitRepository;
 use App\Repository\UserRepository;
 use App\Request\CreateAccountRequest;
+use App\Service\SettingsManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -59,6 +61,29 @@ final class AccountController extends AbstractController
         $parentalUnit->setShareCode(Uuid::v4());
         $entityManager->persist($parentalUnit);
         $entityManager->flush();
+
+        return new JsonResponse(status: Response::HTTP_NO_CONTENT);
+    }
+
+    #[Route('/settings', name: 'app.account.settings.get', methods: [Request::METHOD_GET])]
+    public function settings(SettingsManager $settings): JsonResponse
+    {
+        $user = $this->getUser();
+        assert($user instanceof User);
+
+        return new JsonResponse($settings->getSettings($user));
+    }
+
+    #[Route('/settings', name: 'app.account.settings.update', methods: [Request::METHOD_PATCH])]
+    public function saveSettings(SettingsManager $settings, Request $request): JsonResponse
+    {
+        $user = $this->getUser();
+        assert($user instanceof User);
+
+        $content = json_decode($request->getContent(), true, flags: JSON_THROW_ON_ERROR);
+        foreach ($content as $settingName => $value) {
+            $settings->setSetting($user, ParentalUnitSetting::from($settingName), $value);
+        }
 
         return new JsonResponse(status: Response::HTTP_NO_CONTENT);
     }

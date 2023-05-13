@@ -40,10 +40,14 @@ class ParentalUnit
     #[ORM\Column(type: 'uuid')]
     private ?Uuid $shareCode = null;
 
+    #[ORM\OneToMany(mappedBy: 'parentalUnit', targetEntity: ParentalUnitSetting::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    private Collection $settings;
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
         $this->children = new ArrayCollection();
+        $this->settings = new ArrayCollection();
     }
 
     public function getId(): ?Uuid
@@ -148,5 +152,35 @@ class ParentalUnit
         if ($this->shareCode === null) {
             $this->setShareCode(Uuid::v4());
         }
+    }
+
+    /**
+     * @return Collection<int, ParentalUnitSetting>
+     */
+    public function getSettings(): Collection
+    {
+        return $this->settings;
+    }
+
+    public function addSetting(ParentalUnitSetting $setting): self
+    {
+        if (!$this->settings->contains($setting)) {
+            $this->settings->add($setting);
+            $setting->setParentalUnit($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSetting(ParentalUnitSetting $setting): self
+    {
+        if ($this->settings->removeElement($setting)) {
+            // set the owning side to null (unless already changed)
+            if ($setting->getParentalUnit() === $this) {
+                $setting->setParentalUnit(null);
+            }
+        }
+
+        return $this;
     }
 }
