@@ -262,6 +262,16 @@ class User implements UserInterface, HasParentalUnit, UserEntityInterface
         return array_unique($result);
     }
 
+    public function revokeAllScopes(OAuthClient $client): void
+    {
+        foreach ($this->authorizedOauthScopes as $authorizedOauthScope) {
+            if ($authorizedOauthScope->getClient() !== $client) {
+                continue;
+            }
+            $this->removeAuthorizedOauthScope($authorizedOauthScope);
+        }
+    }
+
     /**
      * @return Collection<int, OAuthAuthorizedUserScope>
      */
@@ -337,5 +347,18 @@ class User implements UserInterface, HasParentalUnit, UserEntityInterface
     public function hasApplicationsConnected(): bool
     {
         return count($this->authorizedOauthClients) > 0;
+    }
+
+    /**
+     * @return array<array{name: string, identifier: string, scopes: array<string>}>
+     */
+    #[ApiProperty(readonly: true, silentFail: true)]
+    public function getApplications(): array
+    {
+        return array_map(fn (OAuthClient $client) => [
+            'name' => (string) $client->getName(),
+            'identifier' => (string) $client->getIdentifier(),
+            'scopes' => $this->findAuthorizedScopes($client),
+        ], [...$this->authorizedOauthClients]);
     }
 }

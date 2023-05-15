@@ -9,6 +9,7 @@ use App\Enum\Scope;
 use App\Repository\OAuthClientRepository;
 use App\Repository\OAuthScopeRepository;
 use App\Repository\UserRepository;
+use App\Request\ModifyScopesRequest;
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Entities\ScopeEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
@@ -23,6 +24,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Uid\Uuid;
@@ -209,5 +211,69 @@ final class OAuthController extends AbstractController
         } catch (OAuthServerException $e) {
             return $e->generateHttpResponse(new Psr7Response());
         }
+    }
+
+    #[Route('/oauth/revoke/{clientId}', name: 'app.oauth.revoke')]
+    public function revoke(
+        string $clientId,
+        OAuthClientRepository $clientRepository,
+        UserRepository $userRepository,
+    ): JsonResponse {
+        $client = $clientRepository->findOneBy([
+            'identifier' => $clientId,
+        ]);
+        if ($client === null) {
+            return new JsonResponse([
+                'error' => 'Client not found',
+            ], status: Response::HTTP_NOT_FOUND);
+        }
+
+        $user = $this->getUser();
+        assert($user instanceof User);
+
+        $user->removeAuthorizedOauthClient($client);
+        $userRepository->save($user, true);
+
+        return new JsonResponse(status: Response::HTTP_NO_CONTENT);
+    }
+
+    #[Route('/oauth/modify-scopes/{clientId}', name: 'app.oauth.modify_scopes')]
+    public function modifyScopes(
+        string $clientId,
+        ModifyScopesRequest $request,
+        OAuthClientRepository $clientRepository,
+        OAuthScopeRepository $scopeRepository,
+        UserRepository $userRepository,
+    ): JsonResponse {
+        $client = $clientRepository->findOneBy([
+            'identifier' => $clientId,
+        ]);
+        if ($client === null) {
+            return new JsonResponse([
+                'error' => 'Client not found',
+            ], status: Response::HTTP_NOT_FOUND);
+        }
+
+        $user = $this->getUser();
+        assert($user instanceof User);
+
+        $scopes = array_map(
+            static fn (string $scope) => $scopeRepository->getScopeEntityByIdentifier($scope)
+                ?? throw new BadRequestHttpException("Invalid scope: {$scope}"),
+            $request->scopes,
+        );
+        $user->revokeAllScopes($client);
+        foreach ($scopes as $scope) {
+            $user->addAuthorizedOauthScope(
+                (new OAuthAuthorizedUserScope())
+                    ->setOwner($user)
+                    ->setScope($scope)
+                    ->setClient($client),
+            );
+        }
+
+        $userRepository->save($user, true);
+
+        return new JsonResponse(status: Response::HTTP_NO_CONTENT);
     }
 }
