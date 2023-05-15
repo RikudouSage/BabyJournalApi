@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5bb0ad44b9df144170250cf3b4165ed7",
+    "content-hash": "cebd747197b000d85d4ffc89ca3cd169",
     "packages": [
         {
             "name": "async-aws/core",
@@ -1708,6 +1708,70 @@
             "time": "2022-05-23T21:33:49+00:00"
         },
         {
+            "name": "dragonmantank/cron-expression",
+            "version": "v2.3.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/dragonmantank/cron-expression.git",
+                "reference": "65b2d8ee1f10915efb3b55597da3404f096acba2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/dragonmantank/cron-expression/zipball/65b2d8ee1f10915efb3b55597da3404f096acba2",
+                "reference": "65b2d8ee1f10915efb3b55597da3404f096acba2",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.0|^8.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^6.4|^7.0|^8.0|^9.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.3-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Cron\\": "src/Cron/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Michael Dowling",
+                    "email": "mtdowling@gmail.com",
+                    "homepage": "https://github.com/mtdowling"
+                },
+                {
+                    "name": "Chris Tankersley",
+                    "email": "chris@ctankersley.com",
+                    "homepage": "https://github.com/dragonmantank"
+                }
+            ],
+            "description": "CRON for PHP: Calculate the next or previous run date and determine if a CRON expression is due",
+            "keywords": [
+                "cron",
+                "schedule"
+            ],
+            "support": {
+                "issues": "https://github.com/dragonmantank/cron-expression/issues",
+                "source": "https://github.com/dragonmantank/cron-expression/tree/v2.3.1"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/dragonmantank",
+                    "type": "github"
+                }
+            ],
+            "time": "2020-10-13T00:52:37+00:00"
+        },
+        {
             "name": "hollodotme/fast-cgi-client",
             "version": "v3.1.7",
             "source": {
@@ -3086,6 +3150,50 @@
                 "source": "https://github.com/RikudouSage/Clock/tree/v1.0.2"
             },
             "time": "2020-12-14T09:54:24+00:00"
+        },
+        {
+            "name": "rikudou/cron-bundle",
+            "version": "v1.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/RikudouSage/RikudouCronBundle.git",
+                "reference": "cfb23c39dd7a157b5f8479eb3074c98bf992ebb4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/RikudouSage/RikudouCronBundle/zipball/cfb23c39dd7a157b5f8479eb3074c98bf992ebb4",
+                "reference": "cfb23c39dd7a157b5f8479eb3074c98bf992ebb4",
+                "shasum": ""
+            },
+            "require": {
+                "dragonmantank/cron-expression": "^2.2",
+                "php": "^8.0",
+                "symfony/console": ">=4.4",
+                "symfony/framework-bundle": ">=4.4",
+                "symfony/yaml": ">=4.4"
+            },
+            "type": "symfony-bundle",
+            "autoload": {
+                "psr-4": {
+                    "Rikudou\\CronBundle\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Dominik Chrástecký",
+                    "email": "dominik@chrastecky.cz"
+                }
+            ],
+            "description": "Simple and effective cron implementation for Symfony 4+",
+            "support": {
+                "issues": "https://github.com/RikudouSage/RikudouCronBundle/issues",
+                "source": "https://github.com/RikudouSage/RikudouCronBundle/tree/v1.1.0"
+            },
+            "time": "2023-03-31T20:34:03+00:00"
         },
         {
             "name": "rikudou/json-api-bundle",

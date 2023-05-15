@@ -107,6 +107,9 @@
             "config/packages/http_discovery.yaml"
         ]
     },
+    "rikudou/cron-bundle": {
+        "version": "v1.1.0"
+    },
     "rikudou/json-api-bundle": {
         "version": "v2.6.2"
     },

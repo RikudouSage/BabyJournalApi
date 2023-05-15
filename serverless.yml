@@ -80,6 +80,24 @@ functions:
       - ${bref:layer.php-82} # PHP
       - ${bref:layer.console} # The "console" layer
 
+  cron:
+    handler: bin/console
+    timeout: 120 # in seconds
+    events:
+      - schedule:
+          rate: cron(0 * * * ? *)
+          input: '"cron:run"'
+    vpc:
+      securityGroupIds:
+        - !GetAtt ServerlessVPC.DefaultSecurityGroup
+      subnetIds:
+        - !Ref PrivateSubnetA
+        - !Ref PrivateSubnetB
+        - !Ref PrivateSubnetC
+    layers:
+      - ${bref:layer.php-82} # PHP
+      - ${bref:layer.console} # The "console" layer
+
 resources:
   Resources:
     AppSecret:

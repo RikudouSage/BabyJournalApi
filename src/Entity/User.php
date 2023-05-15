@@ -332,4 +332,10 @@ class User implements UserInterface, HasParentalUnit, UserEntityInterface
     {
         return in_array($scope->getIdentifier(), $this->findAuthorizedScopes($client), true);
     }
+
+    #[ApiProperty(readonly: true, silentFail: true)]
+    public function hasApplicationsConnected(): bool
+    {
+        return count($this->authorizedOauthClients) > 0;
+    }
 }
