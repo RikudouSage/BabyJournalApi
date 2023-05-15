@@ -35,6 +35,7 @@ provider:
     DYNAMODB_CACHE_TABLE: !Ref CacheTable
     FRONTEND_URL: ${env:APP_FRONTEND_URL, ''}
     OPENAI_VERIFICATION_TOKEN: ${env:OPENAI_VERIFICATION_TOKEN, ''}
+    PRIVATE_KEY_PATH: config/private.key
 
 plugins:
   - ./vendor/bref/bref

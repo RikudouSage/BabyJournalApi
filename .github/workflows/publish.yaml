@@ -24,6 +24,8 @@ jobs:
           php bin/console secrets:decrypt-to-local --force
         env:
           APP_ENV: prod
+      - name: Create private key
+        run: echo '${{ secrets.PROD_PRIVATE_KEY}}' > config/private.key
       - name: Warmup cache
         run: php bin/console cache:warmup --env=prod
       - name: Deploy
@@ -38,6 +40,7 @@ jobs:
           APP_DOMAIN_HOSTED_ZONE: ${{ secrets.APP_DOMAIN_HOSTED_ZONE }}
           APP_DOMAIN: api.baby-journal.app
           APP_FRONTEND_URL: https://baby-journal.app
+          OPENAI_VERIFICATION_TOKEN: ${{ secrets.OPENAI_VERIFICATION_TOKEN }}
       - name: Migrations
         uses: serverless/github-action@v3
         with:
@@ -49,3 +52,5 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           APP_DOMAIN_HOSTED_ZONE: ${{ secrets.APP_DOMAIN_HOSTED_ZONE }}
           APP_DOMAIN: api.baby-journal.app
+          APP_FRONTEND_URL: https://baby-journal.app
+          OPENAI_VERIFICATION_TOKEN: ${{ secrets.OPENAI_VERIFICATION_TOKEN }}
