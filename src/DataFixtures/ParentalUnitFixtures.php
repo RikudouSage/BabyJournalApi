@@ -3,7 +3,6 @@
 namespace App\DataFixtures;
 
 use App\Entity\ParentalUnit;
-use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 
 class ParentalUnitFixtures extends AbstractFixture

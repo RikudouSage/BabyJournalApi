@@ -10,7 +10,6 @@ use Doctrine\ORM\QueryBuilder;
  */
 final class UserApiFilter implements ApiFilter
 {
-
     public function getClass(): string
     {
         return User::class;

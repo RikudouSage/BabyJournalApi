@@ -11,6 +11,7 @@ final readonly class CreateAccountRequest
 {
     #[InitializeTo(value: null)]
     public ?string $name;
+
     #[InitializeTo(value: null)]
     public ?string $parentalUnitName;
 

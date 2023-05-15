@@ -6,6 +6,7 @@ use App\EntityType\Activity;
 use App\Enum\ActivityType;
 use App\Repository\DiaperingActivityRepository;
 use App\Trait\BasicActivityTrait;
+use BackedEnum;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Rikudou\JsonApiBundle\Attribute\ApiProperty;
@@ -34,6 +35,9 @@ class DiaperingActivity implements Activity
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $poopColor = null;
 
+    /**
+     * @return array<string, string|null|BackedEnum>
+     */
     public function getCustomJson(): array
     {
         return [

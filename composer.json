@@ -12,13 +12,17 @@
         "doctrine/doctrine-bundle": "^2.9",
         "doctrine/doctrine-migrations-bundle": "^3.2",
         "doctrine/orm": "^2.14",
+        "league/oauth2-server": "^8.5",
         "nelmio/cors-bundle": "^2.3",
+        "php-http/discovery": "^1.18",
+        "psr/http-factory-implementation": "*",
         "rikudou/json-api-bundle": "^2.6",
         "rikudou/psr6-dynamo-db-bundle": "^4.0",
         "symfony/console": "6.2.*",
         "symfony/dotenv": "6.2.*",
         "symfony/flex": "^2",
         "symfony/framework-bundle": "6.2.*",
+        "symfony/psr-http-message-bridge": "^2.1",
         "symfony/runtime": "6.2.*",
         "symfony/security-bundle": "6.2.*",
         "symfony/translation": "6.2.*",
@@ -29,7 +33,8 @@
         "allow-plugins": {
             "php-http/discovery": true,
             "symfony/flex": true,
-            "symfony/runtime": true
+            "symfony/runtime": true,
+            "phpstan/extension-installer": true
         },
         "sort-packages": true
     },
@@ -62,7 +67,10 @@
         ],
         "post-update-cmd": [
             "@auto-scripts"
-        ]
+        ],
+        "translations": "bin/console translation:extract cs --force --format yaml",
+        "fixer": "php-cs-fixer fix --verbose --allow-risky=yes",
+        "phpstan": "phpstan analyse --level=max src"
     },
     "conflict": {
         "symfony/symfony": "*"
@@ -76,6 +84,10 @@
     },
     "require-dev": {
         "doctrine/doctrine-fixtures-bundle": "^3.4",
+        "friendsofphp/php-cs-fixer": "^3.16",
+        "phpstan/extension-installer": "^1.3",
+        "phpstan/phpstan": "^1.10",
+        "phpstan/phpstan-symfony": "^1.3",
         "symfony/debug-bundle": "6.2.*",
         "symfony/maker-bundle": "^1.48",
         "symfony/monolog-bundle": "^3.0",

@@ -45,6 +45,7 @@ final readonly class RequestDtoResolver implements ValueResolverInterface
     }
 
     /**
+     * @param class-string $type
      * @param array<mixed> $data
      */
     private function parse(string $type, array $data): object
@@ -86,6 +87,7 @@ final readonly class RequestDtoResolver implements ValueResolverInterface
                         }
                         if ($this->hasRequestDtoAttribute($type->getName())) {
                             assert(is_array($value));
+                            assert(class_exists($type->getName()));
                             $value = $this->parse($type->getName(), $value);
                         }
                     }

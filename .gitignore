@@ -13,3 +13,8 @@
 ###> bref/symfony-bridge ###
 /.serverless/
 ###< bref/symfony-bridge ###
+
+###> friendsofphp/php-cs-fixer ###
+/.php-cs-fixer.php
+/.php-cs-fixer.cache
+###< friendsofphp/php-cs-fixer ###

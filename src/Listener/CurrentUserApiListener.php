@@ -13,8 +13,7 @@ final class CurrentUserApiListener implements EventSubscriberInterface
 {
     public function __construct(
         private readonly Security $security,
-    )
-    {
+    ) {
     }
 
     public static function getSubscribedEvents(): array

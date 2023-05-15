@@ -17,7 +17,7 @@ final readonly class SettingsManager
     }
 
     /**
-     * @return array<string, string>
+     * @return array<string, string|null>
      */
     public function getSettings(User $user): array
     {
@@ -37,7 +37,7 @@ final readonly class SettingsManager
             ->andWhere('pus.setting = :setting')
             ->andWhere('pus.parentalUnit = :parentalUnit')
             ->setParameter('setting', $setting)
-            ->setParameter('parentalUnit', $user->getParentalUnit()?->getId()->toBinary())
+            ->setParameter('parentalUnit', $user->getParentalUnit()?->getId()?->toBinary())
             ->getQuery()
             ->getOneOrNullResult();
         if ($entity === null) {
@@ -46,13 +46,14 @@ final readonly class SettingsManager
                 ->setParentalUnit($user->getParentalUnit())
             ;
         }
+        assert($entity instanceof ParentalUnitSettingEntity);
+
         $entity->setValue($value);
         $this->entityManager->persist($entity);
         $this->entityManager->flush();
     }
 
     /**
-     * @param User $user
      * @return array<string, ParentalUnitSettingEntity>
      */
     private function getMap(User $user): array
@@ -60,6 +61,7 @@ final readonly class SettingsManager
         $result = [];
         $settingEntities = $user->getParentalUnit()?->getSettings() ?? [];
         foreach ($settingEntities as $settingEntity) {
+            assert($settingEntity->getSetting() !== null);
             $result[$settingEntity->getSetting()->value] = $settingEntity;
         }
 

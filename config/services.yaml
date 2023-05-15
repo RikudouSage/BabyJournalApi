@@ -4,6 +4,14 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
+    app.info.display_name: '%env(APP_DISPLAY_NAME)%'
+    app.info.machine_name: '%env(APP_MACHINE_NAME)%'
+    app.info.frontend_url: '%env(FRONTEND_URL)%'
+    app.info.support_email: '%env(SUPPORT_EMAIL)%'
+    app.info.legal_info_url: '%env(LEGAL_INFO_URL)%'
+    chatgpt.human_description: '%env(CHATGPT_HUMAN_DESCRIPTION)%'
+    chatgpt.machine_description: '%env(CHATGPT_MACHINE_DESCRIPTION)%'
+    chatgpt.openai_verification_token: '%env(OPENAI_VERIFICATION_TOKEN)%'
 
 services:
     # default configuration for services in *this* file
@@ -33,3 +41,48 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+    app.oauth.auth_code_ttl:
+        class: DateInterval
+        arguments:
+            - 'PT10M'
+    app.oauth.refresh_token_ttl:
+        class: DateInterval
+        arguments:
+            - 'P1M'
+    app.oauth.access_token_ttl:
+        class: DateInterval
+        arguments:
+            - 'PT1H'
+    app.oauth.encryption_key:
+        class: Defuse\Crypto\Key
+        factory: [ 'Defuse\Crypto\Key', 'loadFromAsciiSafeString' ]
+        arguments:
+            - '%env(DEFUSE_KEY)%'
+    app.oauth.private_key:
+        class: League\OAuth2\Server\CryptKey
+        arguments:
+            - '%kernel.project_dir%/%env(PRIVATE_KEY_PATH)%'
+            - null
+            - false
+
+    Symfony\Component\PasswordHasher\PasswordHasherInterface:
+        class:  Symfony\Component\PasswordHasher\Hasher\NativePasswordHasher
+
+    League\OAuth2\Server\Grant\AuthCodeGrant:
+        arguments:
+            - '@App\Repository\OAuthAuthCodeRepository'
+            - '@App\Repository\OAuthRefreshTokenRepository'
+            - '@app.oauth.auth_code_ttl'
+        calls:
+            - setRefreshTokenTTL: ['@app.oauth.refresh_token_ttl']
+
+    League\OAuth2\Server\AuthorizationServer:
+        arguments:
+            - '@App\Repository\OAuthClientRepository'
+            - '@App\Repository\OAuthAccessTokenRepository'
+            - '@App\Repository\OAuthScopeRepository'
+            - '@app.oauth.private_key'
+            - '@app.oauth.encryption_key'
+        calls:
+            - enableGrantType: ['@League\OAuth2\Server\Grant\AuthCodeGrant', '@app.oauth.access_token_ttl']

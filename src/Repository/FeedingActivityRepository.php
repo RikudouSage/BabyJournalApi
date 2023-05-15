@@ -10,6 +10,8 @@ use Doctrine\Persistence\ManagerRegistry;
 /**
  * @extends ServiceEntityRepository<FeedingActivity>
  *
+ * @implements ActivityRepository<FeedingActivity>
+ *
  * @method FeedingActivity|null find($id, $lockMode = null, $lockVersion = null)
  * @method FeedingActivity|null findOneBy(array $criteria, array $orderBy = null)
  * @method FeedingActivity[]    findAll()

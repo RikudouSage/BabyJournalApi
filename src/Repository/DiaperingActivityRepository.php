@@ -10,6 +10,8 @@ use Doctrine\Persistence\ManagerRegistry;
 /**
  * @extends ServiceEntityRepository<DiaperingActivity>
  *
+ * @implements ActivityRepository<DiaperingActivity>
+ *
  * @method DiaperingActivity|null find($id, $lockMode = null, $lockVersion = null)
  * @method DiaperingActivity|null findOneBy(array $criteria, array $orderBy = null)
  * @method DiaperingActivity[]    findAll()

@@ -24,10 +24,16 @@ class ParentalUnit
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     private ?Uuid $id = null;
 
+    /**
+     * @var Collection<int, User>
+     */
     #[ApiProperty(relation: true)]
     #[ORM\OneToMany(mappedBy: 'parentalUnit', targetEntity: User::class, cascade: ['persist', 'remove'])]
     private Collection $users;
 
+    /**
+     * @var Collection<int, Child>
+     */
     #[ApiProperty(relation: true)]
     #[ORM\OneToMany(mappedBy: 'parentalUnit', targetEntity: Child::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     private Collection $children;
@@ -40,6 +46,9 @@ class ParentalUnit
     #[ORM\Column(type: 'uuid')]
     private ?Uuid $shareCode = null;
 
+    /**
+     * @var Collection<int, ParentalUnitSetting>
+     */
     #[ORM\OneToMany(mappedBy: 'parentalUnit', targetEntity: ParentalUnitSetting::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     private Collection $settings;
 

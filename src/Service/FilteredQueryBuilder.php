@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 final class FilteredQueryBuilder extends AbstractFilteredQueryBuilder
 {
     /**
-     * @param iterable<ApiFilter> $filters
+     * @param iterable<ApiFilter<object>> $filters
      */
     public function __construct(
         #[TaggedIterator(tag: 'app.api.entity_filter')]

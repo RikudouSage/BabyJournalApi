@@ -6,6 +6,7 @@ use App\EntityType\Activity;
 use App\Enum\ActivityType;
 use App\Repository\SleepingActivityRepository;
 use App\Trait\BasicActivityTrait;
+use BackedEnum;
 use Doctrine\ORM\Mapping as ORM;
 use Rikudou\JsonApiBundle\Attribute\ApiResource;
 
@@ -21,6 +22,9 @@ class SleepingActivity implements Activity
         return ActivityType::Sleeping;
     }
 
+    /**
+     * @return array<string, string|null|BackedEnum>
+     */
     protected function getCustomJson(): array
     {
         return [];

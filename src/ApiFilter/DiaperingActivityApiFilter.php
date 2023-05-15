@@ -3,9 +3,10 @@
 namespace App\ApiFilter;
 
 use App\Entity\DiaperingActivity;
-use App\Entity\User;
-use Doctrine\ORM\QueryBuilder;
 
+/**
+ * @extends AbstractActivityApiFilter<DiaperingActivity>
+ */
 final class DiaperingActivityApiFilter extends AbstractActivityApiFilter
 {
     public function getClass(): string

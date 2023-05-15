@@ -31,6 +31,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           APP_DOMAIN_HOSTED_ZONE: ${{ secrets.APP_DOMAIN_HOSTED_ZONE }}
           APP_DOMAIN: api.baby-journal.app
+          APP_FRONTEND_URL: https://baby-journal.app
       - name: Migrations
         uses: serverless/github-action@v3
         with:

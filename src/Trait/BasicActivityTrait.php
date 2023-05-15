@@ -3,11 +3,13 @@
 namespace App\Trait;
 
 use App\Entity\Child;
+use BackedEnum;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Rikudou\JsonApiBundle\Attribute\ApiProperty;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Component\Uid\Uuid;
+
 use function Rikudou\ArrayMergeRecursive\array_merge_recursive;
 
 trait BasicActivityTrait
@@ -39,6 +41,9 @@ trait BasicActivityTrait
     #[ORM\JoinColumn(nullable: false)]
     private ?Child $child = null;
 
+    /**
+     * @return array<string, string|null|BackedEnum>
+     */
     abstract protected function getCustomJson(): array;
 
     public function getId(): ?Uuid
@@ -82,7 +87,6 @@ trait BasicActivityTrait
         return $this;
     }
 
-
     public function getNote(): ?string
     {
         return $this->note;
@@ -94,7 +98,6 @@ trait BasicActivityTrait
 
         return $this;
     }
-
 
     public function getChild(): ?Child
     {
@@ -108,11 +111,17 @@ trait BasicActivityTrait
         return $this;
     }
 
+    /**
+     * @return array<string, string|null|BackedEnum>
+     */
     public function toJson(): array
     {
         return array_merge_recursive($this->getBaseJson(), $this->getCustomJson());
     }
 
+    /**
+     * @return array<string, string|null|BackedEnum>
+     */
     private function getBaseJson(): array
     {
         return [
