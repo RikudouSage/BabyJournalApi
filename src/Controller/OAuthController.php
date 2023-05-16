@@ -77,6 +77,7 @@ final class OAuthController extends AbstractController
     public function isAuthorized(
         SessionInterface $session,
         UrlGeneratorInterface $urlGenerator,
+        OAuthClientRepository $clientRepository,
     ): JsonResponse {
         $user = $this->getUser();
         if ($user === null) {
@@ -94,11 +95,11 @@ final class OAuthController extends AbstractController
                 'error' => "Auth request doesn't exist",
             ], Response::HTTP_NOT_FOUND);
         }
-        $client = $authRequest->getClient();
+        $client = $clientRepository->findOneBy(['identifier' => $authRequest->getClient()->getIdentifier()]);
         assert($client instanceof OAuthClient);
 
         if (
-            in_array($client->getIdentifier(), array_map(static fn (OAuthClient $client) => $client->getIdentifier(), [...$user->getAuthorizedOauthClients()]))
+            in_array($client->getIdentifier(), array_map(static fn (OAuthClient $client) => $client->getIdentifier(), [...$user->getAuthorizedOauthClients()]), true)
             && !count(array_diff(
                 array_map(static fn (ScopeEntityInterface $scope) => $scope->getIdentifier(), $authRequest->getScopes()),
                 $user->findAuthorizedScopes($client),
@@ -111,7 +112,10 @@ final class OAuthController extends AbstractController
 
             return new JsonResponse([
                 'success' => true,
-                'redirectUrl' => $urlGenerator->generate('app.oauth.approve', ['approved' => true], UrlGeneratorInterface::ABSOLUTE_URL),
+                'redirectUrl' => $urlGenerator->generate('app.oauth.approve', [
+                    'approved' => true,
+                    'userId' => $user->getIdentifier(),
+                ], UrlGeneratorInterface::ABSOLUTE_URL),
             ]);
         }
 
