@@ -87,4 +87,20 @@ final class AccountController extends AbstractController
 
         return new JsonResponse(status: Response::HTTP_NO_CONTENT);
     }
+
+    #[Route('/delete', name: 'app.account.delete', methods: [Request::METHOD_DELETE])]
+    public function deleteAccount(EntityManagerInterface $entityManager): JsonResponse
+    {
+        $user = $this->getUser();
+        assert($user instanceof User);
+        $parentalUnit = $user->getParentalUnit();
+        assert($parentalUnit instanceof ParentalUnit);
+
+        $entityManager->remove($user);
+        if (count($parentalUnit->getUsers()) === 0) {
+            $entityManager->remove($parentalUnit);
+        }
+
+        return new JsonResponse(status: Response::HTTP_NO_CONTENT);
+    }
 }
