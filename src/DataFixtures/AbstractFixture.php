@@ -7,7 +7,6 @@ use App\Repository\ParentalUnitRepository;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use LogicException;
 use Symfony\Contracts\Service\Attribute\Required;
-use Symfony\Contracts\Service\ServiceSubscriberInterface;
 
 abstract class AbstractFixture extends Fixture
 {
@@ -16,6 +15,8 @@ abstract class AbstractFixture extends Fixture
     protected function encrypt(string $content): string
     {
         $key = file_get_contents(__DIR__ . '/../../config/dev_private_key/public.key');
+        assert(is_string($key));
+
         openssl_public_encrypt($content, $encrypted, $key);
 
         return bin2hex($encrypted);
@@ -25,6 +26,10 @@ abstract class AbstractFixture extends Fixture
     {
         $content = hex2bin($content);
         $key = file_get_contents(__DIR__ . '/../../config/dev_private_key/private.key');
+
+        assert(is_string($content));
+        assert(is_string($key));
+
         openssl_private_decrypt($content, $decrypted, $key);
 
         return $decrypted;
@@ -34,7 +39,7 @@ abstract class AbstractFixture extends Fixture
     {
         $units = $this->parentalUnitRepository->findAll();
         foreach ($units as $unit) {
-            if ($this->decrypt($unit->getName()) === $name) {
+            if ($this->decrypt((string) $unit->getName()) === $name) {
                 return $unit;
             }
         }

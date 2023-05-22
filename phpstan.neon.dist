@@ -1,0 +1,7 @@
+parameters:
+  symfony:
+    containerXmlPath: var/cache/dev/App_KernelDevDebugContainer.xml
+    consoleApplicationLoader: tests/console-application.php
+  ignoreErrors:
+    - '#Method App\\Entity\\.+?::toJson\(\) should return array<.+?> but returns array.#'
+    - '#has an uninitialized readonly property#'

@@ -32,6 +32,6 @@ final class LogExceptionsListener implements EventSubscriberInterface
             ];
         }
 
-        error_log(json_encode($messages, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
+        error_log(json_encode($messages, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR));
     }
 }

@@ -3,16 +3,13 @@
 namespace App\Controller;
 
 use App\Entity\Child;
-use App\Entity\FeedingActivity;
 use App\Entity\User;
 use App\EntityType\Activity;
 use App\EntityType\ActivityRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
 use LogicException;
 use Symfony\Bridge\Doctrine\Types\UuidType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Attribute\TaggedIterator;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,7 +20,7 @@ use Symfony\Component\Uid\Uuid;
 final class ActivityController extends AbstractController
 {
     /**
-     * @param iterable<ActivityRepository> $activityRepositories
+     * @param iterable<ActivityRepository<Activity>> $activityRepositories
      */
     public function __construct(
         #[TaggedIterator('app.activity.repository')]
@@ -67,11 +64,12 @@ final class ActivityController extends AbstractController
                     ->getResult()
                 ;
             }
+            assert(is_array($activities));
 
             if (count($activities)) {
                 $last = $activities[array_key_last($activities)];
                 assert($last instanceof Activity);
-                $lastViewed[$repository->getClassName()] = $last->getId();
+                $lastViewed[$repository->getClassName()] = (string) $last->getId();
             }
 
             $results = array_merge($results, $activities);
@@ -81,10 +79,10 @@ final class ActivityController extends AbstractController
         $entityManager->persist($user);
         $entityManager->flush();
 
-        return new JsonResponse(array_map(function (object $activity) {
+        return new JsonResponse(array_map(static function (object $activity) {
             if (!$activity instanceof Activity) {
                 throw new LogicException(
-                    sprintf('All objects must be an instance of %s, %s is not', Activity::class, get_class($activity)),
+                    sprintf('All objects must be an instance of %s, %s is not', Activity::class, $activity::class),
                 );
             }
 
@@ -114,7 +112,7 @@ final class ActivityController extends AbstractController
             if (count($activities)) {
                 $last = $activities[array_key_last($activities)];
                 assert($last instanceof Activity);
-                $lastViewed[$repository->getClassName()] = $last->getId();
+                $lastViewed[$repository->getClassName()] = (string) $last->getId();
             }
             $results = array_merge($results, $repository->findBy([
                 'child' => $child,
@@ -125,10 +123,10 @@ final class ActivityController extends AbstractController
         $entityManager->persist($user);
         $entityManager->flush();
 
-        return new JsonResponse(array_map(function (object $activity) {
+        return new JsonResponse(array_map(static function (object $activity) {
             if (!$activity instanceof Activity) {
                 throw new LogicException(
-                    sprintf('All objects must be an instance of %s, %s is not', Activity::class, get_class($activity)),
+                    sprintf('All objects must be an instance of %s, %s is not', Activity::class, $activity::class),
                 );
             }
 

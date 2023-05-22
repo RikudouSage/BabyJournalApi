@@ -6,6 +6,9 @@ use App\Entity\ParentalUnitSetting;
 use App\Entity\User;
 use Doctrine\ORM\QueryBuilder;
 
+/**
+ * @implements ApiFilter<ParentalUnitSetting>
+ */
 final class ParentalUnitSettingApiFilter implements ApiFilter
 {
     public function getClass(): string

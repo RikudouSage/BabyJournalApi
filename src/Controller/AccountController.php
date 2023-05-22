@@ -6,7 +6,6 @@ use App\Entity\ParentalUnit;
 use App\Entity\User;
 use App\Enum\ParentalUnitSetting;
 use App\Repository\ParentalUnitRepository;
-use App\Repository\UserRepository;
 use App\Request\CreateAccountRequest;
 use App\Service\SettingsManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -32,6 +31,9 @@ final class AccountController extends AbstractController
                 'shareCode' => $request->parentalUnitId,
             ])
             : (new ParentalUnit())->setName($request->parentalUnitName);
+        if ($parentalUnit === null) {
+            throw $this->createNotFoundException('Family not found');
+        }
         $user = (new User())
             ->setName($request->name)
             ->setParentalUnit($parentalUnit)
@@ -81,6 +83,8 @@ final class AccountController extends AbstractController
         assert($user instanceof User);
 
         $content = json_decode($request->getContent(), true, flags: JSON_THROW_ON_ERROR);
+        assert(is_array($content));
+
         foreach ($content as $settingName => $value) {
             $settings->setSetting($user, ParentalUnitSetting::from($settingName), $value);
         }

@@ -13,4 +13,5 @@ return [
     Symfony\Bundle\WebProfilerBundle\WebProfilerBundle::class => ['dev' => true, 'test' => true],
     Symfony\Bundle\DebugBundle\DebugBundle::class => ['dev' => true],
     Rikudou\DynamoDbCacheBundle\RikudouDynamoDbCacheBundle::class => ['prod' => true],
+    Rikudou\CronBundle\RikudouCronBundle::class => ['all' => true],
 ];

@@ -5,6 +5,11 @@ namespace App\ApiFilter;
 use App\Entity\User;
 use Doctrine\ORM\QueryBuilder;
 
+/**
+ * @template T of object
+ *
+ * @implements ApiFilter<T>
+ */
 abstract class AbstractActivityApiFilter implements ApiFilter
 {
     public function getQueryBuilder(QueryBuilder $builder, User $currentUser): QueryBuilder

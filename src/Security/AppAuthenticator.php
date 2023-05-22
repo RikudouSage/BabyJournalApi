@@ -4,6 +4,7 @@ namespace App\Security;
 
 use App\Entity\User;
 use App\Repository\UserRepository;
+use LogicException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -45,7 +46,10 @@ class AppAuthenticator extends AbstractAuthenticator implements AuthenticationEn
         }
 
         return new SelfValidatingPassport(new UserBadge($userId, function (string $userId): User {
-            return $this->userRepository->find(Uuid::fromString($userId)->toBinary());
+            return
+                $this->userRepository->find(Uuid::fromString($userId)->toBinary())
+                ?? throw new LogicException('User does not exist')
+            ;
         }));
     }
 
@@ -62,7 +66,7 @@ class AppAuthenticator extends AbstractAuthenticator implements AuthenticationEn
         ], Response::HTTP_UNAUTHORIZED);
     }
 
-    public function start(Request $request, AuthenticationException $authException = null): JsonResponse
+    public function start(Request $request, ?AuthenticationException $authException = null): JsonResponse
     {
         return new JsonResponse([
             'error' => 'Unauthorized',

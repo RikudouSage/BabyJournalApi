@@ -6,6 +6,7 @@ use App\EntityType\Activity;
 use App\Enum\ActivityType;
 use App\Repository\FeedingActivityRepository;
 use App\Trait\BasicActivityTrait;
+use BackedEnum;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Rikudou\JsonApiBundle\Attribute\ApiProperty;
@@ -70,6 +71,9 @@ class FeedingActivity implements Activity
         return $this;
     }
 
+    /**
+     * @return array<string, string|null|BackedEnum>
+     */
     protected function getCustomJson(): array
     {
         return [
@@ -85,6 +89,7 @@ class FeedingActivity implements Activity
         if ($this->bottleContentType === null && $this->breast === null) {
             return ActivityType::FeedingSolid;
         }
+
         return $this->bottleContentType !== null
             ? ActivityType::FeedingBottle
             : ActivityType::FeedingBreast;

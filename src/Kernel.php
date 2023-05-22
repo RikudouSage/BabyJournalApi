@@ -11,6 +11,10 @@ class Kernel extends BrefKernel
 
     public function getBuildDir(): string
     {
+        if ($this->environment !== 'prod') {
+            return parent::getCacheDir();
+        }
+
         /** @noinspection ProjectDirParameter */
         return $this->getProjectDir() . '/var/cache/' . $this->environment;
     }

@@ -12,7 +12,7 @@ use Symfony\Component\DependencyInjection\Attribute\TaggedIterator;
 final readonly class ChildRemoveListener implements EventSubscriber
 {
     /**
-     * @param iterable<ActivityRepository> $activityRepositories
+     * @param iterable<ActivityRepository<object>> $activityRepositories
      */
     public function __construct(
         #[TaggedIterator('app.activity.repository')]

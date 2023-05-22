@@ -6,9 +6,11 @@ use App\Entity\Child;
 use App\Entity\User;
 use Doctrine\ORM\QueryBuilder;
 
+/**
+ * @implements ApiFilter<Child>
+ */
 final class ChildApiFilter implements ApiFilter
 {
-
     public function getClass(): string
     {
         return Child::class;
