@@ -10,6 +10,7 @@ use App\Repository\OAuthClientRepository;
 use App\Repository\OAuthScopeRepository;
 use App\Repository\UserRepository;
 use App\Request\ModifyScopesRequest;
+use App\Request\StoreUserKeysRequest;
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Entities\ScopeEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
@@ -99,7 +100,8 @@ final class OAuthController extends AbstractController
         assert($client instanceof OAuthClient);
 
         if (
-            in_array($client->getIdentifier(), array_map(static fn (OAuthClient $client) => $client->getIdentifier(), [...$user->getAuthorizedOauthClients()]), true)
+            $user->getEncryptionKey() !== null
+            && in_array($client->getIdentifier(), array_map(static fn (OAuthClient $client) => $client->getIdentifier(), [...$user->getAuthorizedOauthClients()]), true)
             && !count(array_diff(
                 array_map(static fn (ScopeEntityInterface $scope) => $scope->getIdentifier(), $authRequest->getScopes()),
                 $user->findAuthorizedScopes($client),
@@ -276,6 +278,20 @@ final class OAuthController extends AbstractController
             );
         }
 
+        $userRepository->save($user, true);
+
+        return new JsonResponse(status: Response::HTTP_NO_CONTENT);
+    }
+
+    #[Route('/oauth/store-keys', name: 'app.oauth.store_keys')]
+    public function storeUserKeys(
+        StoreUserKeysRequest $request,
+        UserRepository $userRepository,
+    ): JsonResponse {
+        $user = $this->getUser();
+        assert($user instanceof User);
+
+        $user->setEncryptionKey($request->keys);
         $userRepository->save($user, true);
 
         return new JsonResponse(status: Response::HTTP_NO_CONTENT);

@@ -65,6 +65,12 @@ services:
             - '%kernel.project_dir%/%env(PRIVATE_KEY_PATH)%'
             - null
             - false
+    app.oauth.public_key:
+        class: League\OAuth2\Server\CryptKey
+        arguments:
+            - '%kernel.project_dir%/%env(PUBLIC_KEY_PATH)%'
+            - null
+            - false
 
     Symfony\Component\PasswordHasher\PasswordHasherInterface:
         class:  Symfony\Component\PasswordHasher\Hasher\NativePasswordHasher
@@ -77,6 +83,12 @@ services:
         calls:
             - setRefreshTokenTTL: ['@app.oauth.refresh_token_ttl']
 
+    League\OAuth2\Server\Grant\RefreshTokenGrant:
+        arguments:
+            - '@App\Repository\OAuthRefreshTokenRepository'
+        calls:
+            - setRefreshTokenTTL: ['@app.oauth.refresh_token_ttl']
+
     League\OAuth2\Server\AuthorizationServer:
         arguments:
             - '@App\Repository\OAuthClientRepository'
@@ -86,3 +98,9 @@ services:
             - '@app.oauth.encryption_key'
         calls:
             - enableGrantType: ['@League\OAuth2\Server\Grant\AuthCodeGrant', '@app.oauth.access_token_ttl']
+            - enableGrantType: ['@League\OAuth2\Server\Grant\RefreshTokenGrant', '@app.oauth.access_token_ttl']
+
+    League\OAuth2\Server\ResourceServer:
+        arguments:
+            - '@App\Repository\OAuthAccessTokenRepository'
+            - '@app.oauth.public_key'

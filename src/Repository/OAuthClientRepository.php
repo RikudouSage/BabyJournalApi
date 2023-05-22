@@ -6,6 +6,7 @@ use App\Entity\OAuthClient;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use League\OAuth2\Server\Grant\AuthCodeGrant;
+use League\OAuth2\Server\Grant\RefreshTokenGrant;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use Symfony\Component\PasswordHasher\PasswordHasherInterface;
 
@@ -21,7 +22,6 @@ final class OAuthClientRepository extends ServiceEntityRepository implements Cli
 {
     public function __construct(
         ManagerRegistry $registry,
-        private readonly AuthCodeGrant $authCodeGrant,
         private readonly PasswordHasherInterface $passwordHasher,
     ) {
         parent::__construct($registry, OAuthClient::class);
@@ -54,10 +54,6 @@ final class OAuthClientRepository extends ServiceEntityRepository implements Cli
 
     public function validateClient($clientIdentifier, $clientSecret, $grantType): bool
     {
-        if ($grantType !== $this->authCodeGrant->getIdentifier()) {
-            return false;
-        }
-
         $entity = $this->getClientEntity($clientIdentifier);
         if ($entity === null) {
             return false;
