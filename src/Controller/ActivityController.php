@@ -15,6 +15,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Attribute\TaggedIterator;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Uid\Uuid;
@@ -93,8 +94,11 @@ final class ActivityController extends AbstractController
     }
 
     #[Route('', name: 'app.activities.list')]
-    public function listActivities(EntityManagerInterface $entityManager): JsonResponse
+    public function listActivities(EntityManagerInterface $entityManager, Request $request): JsonResponse
     {
+        $perPage = 500;
+        $page = $request->query->getInt('page', 1);
+
         $user = $this->getUser();
         if (!$user instanceof User) {
             return new JsonResponse([], Response::HTTP_UNAUTHORIZED);
@@ -124,6 +128,8 @@ final class ActivityController extends AbstractController
         $user->setNewestActivitiesViewed($lastViewed);
         $entityManager->persist($user);
         $entityManager->flush();
+
+        $results = array_slice($results, $page - 1, $perPage);
 
         return new JsonResponse(array_map(function (object $activity) {
             if (!$activity instanceof Activity) {
