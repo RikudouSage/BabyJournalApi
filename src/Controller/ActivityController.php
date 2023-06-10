@@ -139,6 +139,9 @@ final class ActivityController extends AbstractController
             }
 
             return $activity->toJson();
-        }, $results));
+        }, $results, headers: [
+            'X-Total-Count' => count($results),
+            'X-Per-Page' => $perPage,
+        ]));
     }
 }
