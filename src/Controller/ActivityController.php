@@ -129,6 +129,7 @@ final class ActivityController extends AbstractController
         $entityManager->persist($user);
         $entityManager->flush();
 
+        $totalCount = count($results);
         $results = array_slice($results, $page - 1, $perPage);
 
         return new JsonResponse(array_map(function (object $activity) {
@@ -140,7 +141,7 @@ final class ActivityController extends AbstractController
 
             return $activity->toJson();
         }, $results), headers: [
-            'X-Total-Count' => count($results),
+            'X-Total-Count' => $totalCount,
             'X-Per-Page' => $perPage,
         ]);
     }
