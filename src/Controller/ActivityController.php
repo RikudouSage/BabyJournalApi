@@ -130,7 +130,7 @@ final class ActivityController extends AbstractController
         $entityManager->flush();
 
         $totalCount = count($results);
-        $results = array_slice($results, $page - 1, $perPage);
+        $results = array_slice($results, ($page - 1) * $perPage, $perPage);
 
         return new JsonResponse(array_map(function (object $activity) {
             if (!$activity instanceof Activity) {
