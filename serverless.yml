@@ -9,6 +9,9 @@ provider:
   # The stage of the application, e.g. dev, production, staging… ('dev' is the default)
   stage: ${opt:stage, 'dev'}
   runtime: provided.al2
+  stackTags:
+    BillingProject: BabyJournal
+    BillingSubproject: BabyJournalApi
   iam:
     role:
       statements:
