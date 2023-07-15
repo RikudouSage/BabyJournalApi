@@ -33,7 +33,7 @@ final class ActivityController extends AbstractController
     }
 
     #[Route('/changes', name: 'app.activities.changes')]
-    public function getActivityStreamChanges(EntityManagerInterface $entityManager): JsonResponse
+    public function getActivityStreamChanges(EntityManagerInterface $entityManager, Request $request): JsonResponse
     {
         $user = $this->getUser();
         if (!$user instanceof User) {
@@ -46,7 +46,7 @@ final class ActivityController extends AbstractController
 
         $lastViewed = $user->getNewestActivitiesViewed();
         if ($lastViewed === null) {
-            return $this->listActivities($entityManager);
+            return $this->listActivities($entityManager, $request);
         }
 
         $results = [];

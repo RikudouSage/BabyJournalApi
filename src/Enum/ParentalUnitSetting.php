@@ -9,4 +9,5 @@ enum ParentalUnitSetting: string
     case CalculateFeedingSince = 'calculate_feeding_since';
     case CalculatePumpingSince = 'calculate_pumping_since';
     case CalculateSleepingSince = 'calculate_sleeping_since';
+    case UseSharedInProgress = 'use_shared_in_progress';
 }

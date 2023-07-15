@@ -43,11 +43,15 @@ class ParentalUnit
     #[ORM\OneToMany(mappedBy: 'parentalUnit', targetEntity: ParentalUnitSetting::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     private Collection $settings;
 
+    #[ORM\OneToMany(mappedBy: 'parentalUnit', targetEntity: SharedInProgressActivity::class, orphanRemoval: true)]
+    private Collection $sharedInProgressActivities;
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
         $this->children = new ArrayCollection();
         $this->settings = new ArrayCollection();
+        $this->sharedInProgressActivities = new ArrayCollection();
     }
 
     public function getId(): ?Uuid
@@ -178,6 +182,36 @@ class ParentalUnit
             // set the owning side to null (unless already changed)
             if ($setting->getParentalUnit() === $this) {
                 $setting->setParentalUnit(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, SharedInProgressActivity>
+     */
+    public function getSharedInProgressActivities(): Collection
+    {
+        return $this->sharedInProgressActivities;
+    }
+
+    public function addSharedInProgressActivity(SharedInProgressActivity $sharedInProgressActivity): static
+    {
+        if (!$this->sharedInProgressActivities->contains($sharedInProgressActivity)) {
+            $this->sharedInProgressActivities->add($sharedInProgressActivity);
+            $sharedInProgressActivity->setParentalUnit($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSharedInProgressActivity(SharedInProgressActivity $sharedInProgressActivity): static
+    {
+        if ($this->sharedInProgressActivities->removeElement($sharedInProgressActivity)) {
+            // set the owning side to null (unless already changed)
+            if ($sharedInProgressActivity->getParentalUnit() === $this) {
+                $sharedInProgressActivity->setParentalUnit(null);
             }
         }
 
