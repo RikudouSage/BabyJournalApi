@@ -4,11 +4,13 @@ namespace App\Service;
 
 use App\ApiFilter\ApiFilter;
 use App\Entity\User;
+use App\Repository\ChildRepository;
 use Doctrine\ORM\QueryBuilder;
 use Rikudou\JsonApiBundle\Service\Filter\AbstractFilteredQueryBuilder;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Attribute\TaggedIterator;
 use Symfony\Component\HttpFoundation\ParameterBag;
+use Symfony\Component\Uid\Uuid;
 
 final class FilteredQueryBuilder extends AbstractFilteredQueryBuilder
 {
@@ -19,6 +21,7 @@ final class FilteredQueryBuilder extends AbstractFilteredQueryBuilder
         #[TaggedIterator(tag: 'app.api.entity_filter')]
         private readonly iterable $filters,
         private readonly Security $security,
+        private readonly ChildRepository $childRepository,
     ) {
     }
 

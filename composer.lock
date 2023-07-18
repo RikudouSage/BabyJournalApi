@@ -2464,16 +2464,16 @@
         },
         {
             "name": "rikudou/json-api-bundle",
-            "version": "v2.7.1",
+            "version": "v2.8.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/RikudouSage/JsonApiBundle.git",
-                "reference": "1844f796df842b056942cac2f70a63945b4f1c43"
+                "reference": "9b58eb0864fb3035265fd3856156e55277fb1b7e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/RikudouSage/JsonApiBundle/zipball/1844f796df842b056942cac2f70a63945b4f1c43",
-                "reference": "1844f796df842b056942cac2f70a63945b4f1c43",
+                "url": "https://api.github.com/repos/RikudouSage/JsonApiBundle/zipball/9b58eb0864fb3035265fd3856156e55277fb1b7e",
+                "reference": "9b58eb0864fb3035265fd3856156e55277fb1b7e",
                 "shasum": ""
             },
             "require": {
@@ -2512,9 +2512,9 @@
             "description": "Bundle that converts your entities to JSON api",
             "support": {
                 "issues": "https://github.com/RikudouSage/JsonApiBundle/issues",
-                "source": "https://github.com/RikudouSage/JsonApiBundle/tree/v2.7.1"
+                "source": "https://github.com/RikudouSage/JsonApiBundle/tree/v2.8.0"
             },
-            "time": "2023-05-23T15:25:26+00:00"
+            "time": "2023-07-18T13:06:43+00:00"
         },
         {
             "name": "rikudou/psr6-dynamo-db",
