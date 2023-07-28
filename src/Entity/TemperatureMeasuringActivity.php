@@ -12,6 +12,7 @@ use Rikudou\JsonApiBundle\Attribute\ApiProperty;
 use Rikudou\JsonApiBundle\Attribute\ApiResource;
 
 #[ApiResource]
+#[ORM\Table(name: 'temperature_measuring_activities')]
 #[ORM\Entity(repositoryClass: TemperatureMeasuringActivityRepository::class)]
 class TemperatureMeasuringActivity implements Activity
 {
