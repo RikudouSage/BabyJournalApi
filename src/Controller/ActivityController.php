@@ -7,6 +7,7 @@ use App\Entity\FeedingActivity;
 use App\Entity\User;
 use App\EntityType\Activity;
 use App\EntityType\ActivityRepository;
+use App\Service\ActivityStream;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use LogicException;
@@ -94,8 +95,11 @@ final class ActivityController extends AbstractController
     }
 
     #[Route('', name: 'app.activities.list')]
-    public function listActivities(EntityManagerInterface $entityManager, Request $request): JsonResponse
-    {
+    public function listActivities(
+        EntityManagerInterface $entityManager,
+        Request $request,
+        ActivityStream $activityStream,
+    ): JsonResponse {
         $perPage = 500;
         $page = $request->query->getInt('page', 1);
 
@@ -108,22 +112,7 @@ final class ActivityController extends AbstractController
             return new JsonResponse([]);
         }
 
-        $lastViewed = [];
-
-        $results = [];
-        foreach ($this->activityRepositories as $repository) {
-            $activities = $repository->findBy([
-                'child' => $child,
-            ]);
-            if (count($activities)) {
-                $last = $activities[array_key_last($activities)];
-                assert($last instanceof Activity);
-                $lastViewed[$repository->getClassName()] = $last->getId();
-            }
-            $results = array_merge($results, $repository->findBy([
-                'child' => $child,
-            ]));
-        }
+        $results = [...$activityStream->getActivities($child, $lastViewed)];
 
         $user->setNewestActivitiesViewed($lastViewed);
         $entityManager->persist($user);
