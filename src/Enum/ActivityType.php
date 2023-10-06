@@ -12,4 +12,5 @@ enum ActivityType: string
     case Sleeping = 'sleeping';
     case Weighing = 'weighing';
     case Temperature = 'temperature';
+    case Length = 'length';
 }
