@@ -62,7 +62,7 @@ functions:
         - !Ref PrivateSubnetB
         - !Ref PrivateSubnetC
     layers:
-      - ${bref:layer.php-82-fpm}
+      - ${bref:layer.php-84-fpm}
     events:
       - httpApi: '*'
 
@@ -78,7 +78,7 @@ functions:
         - !Ref PrivateSubnetB
         - !Ref PrivateSubnetC
     layers:
-      - ${bref:layer.php-82} # PHP
+      - ${bref:layer.php-84} # PHP
       - ${bref:layer.console} # The "console" layer
 
 resources:

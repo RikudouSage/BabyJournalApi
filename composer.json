@@ -4,11 +4,11 @@
     "minimum-stability": "stable",
     "prefer-stable": true,
     "require": {
-        "php": ">=8.2",
+        "php": "^8.4",
         "ext-ctype": "*",
         "ext-iconv": "*",
-        "bref/bref": "^2.0",
-        "bref/symfony-bridge": "^0.2.1",
+        "bref/bref": "^2.1",
+        "bref/symfony-bridge": "^1.0",
         "doctrine/doctrine-bundle": "^2.9",
         "doctrine/doctrine-migrations-bundle": "^3.2",
         "doctrine/orm": "^2.14",
@@ -16,15 +16,15 @@
         "nelmio/cors-bundle": "^2.3",
         "rikudou/json-api-bundle": "^2.6",
         "rikudou/psr6-dynamo-db-bundle": "^4.0",
-        "symfony/console": "6.2.*",
-        "symfony/dotenv": "6.2.*",
+        "symfony/console": "*",
+        "symfony/dotenv": "*",
         "symfony/flex": "^2",
-        "symfony/framework-bundle": "6.2.*",
-        "symfony/runtime": "6.2.*",
-        "symfony/security-bundle": "6.2.*",
-        "symfony/translation": "6.2.*",
-        "symfony/uid": "6.2.*",
-        "symfony/yaml": "6.2.*"
+        "symfony/framework-bundle": "*",
+        "symfony/runtime": "*",
+        "symfony/security-bundle": "*",
+        "symfony/translation": "*",
+        "symfony/uid": "*",
+        "symfony/yaml": "*"
     },
     "config": {
         "allow-plugins": {
@@ -72,16 +72,16 @@
     "extra": {
         "symfony": {
             "allow-contrib": true,
-            "require": "6.2.*",
+            "require": "6.4.*",
             "docker": true
         }
     },
     "require-dev": {
         "doctrine/doctrine-fixtures-bundle": "^3.4",
-        "symfony/debug-bundle": "6.2.*",
+        "symfony/debug-bundle": "*",
         "symfony/maker-bundle": "^1.48",
         "symfony/monolog-bundle": "^3.0",
-        "symfony/stopwatch": "6.2.*",
-        "symfony/web-profiler-bundle": "6.2.*"
+        "symfony/stopwatch": "*",
+        "symfony/web-profiler-bundle": "*"
     }
 }
