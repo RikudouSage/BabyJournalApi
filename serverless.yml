@@ -142,6 +142,7 @@ resources:
       Type: AWS::RDS::DBInstance
       Properties:
         Engine: aurora-mysql
+        EngineVersion: 8.0.mysql_aurora.3.08.1
         DBInstanceClass: db.serverless
         DBClusterIdentifier: !Ref DatabaseCluster
     CacheTable:
