@@ -147,7 +147,6 @@ resources:
         EngineVersion: ${self:custom.DatabaseVersion}
         DBInstanceClass: db.serverless
         DBClusterIdentifier: !Ref DatabaseCluster
-        PubliclyAccessible: true
     CacheTable:
       Type: AWS::DynamoDB::Table
       Properties:
