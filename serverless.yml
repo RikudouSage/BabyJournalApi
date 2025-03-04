@@ -126,14 +126,15 @@ resources:
       Properties:
         BackupRetentionPeriod: 5
         Engine: aurora-mysql
-        EngineVersion: 8.0.mysql_aurora.3.03.0
+        EngineVersion: 8.0.mysql_aurora.3.08.1
         DatabaseName: app
         DBSubnetGroupName: !Ref DatabaseSubnetGroup
         MasterUsername: !Join [ '', [ '{{resolve:secretsmanager:', !Ref DatabaseCredentials, ':SecretString:username}}' ] ]
         MasterUserPassword: !Join [ '', [ '{{resolve:secretsmanager:', !Ref DatabaseCredentials, ':SecretString:password}}' ] ]
         ServerlessV2ScalingConfiguration:
           MaxCapacity: 8
-          MinCapacity: 0.5
+          MinCapacity: 0
+          SecondsUntilAutoPause: 300
         StorageEncrypted: true
         VpcSecurityGroupIds:
           - !GetAtt ServerlessVPC.DefaultSecurityGroup
