@@ -48,6 +48,7 @@ custom:
   Subnet3Cidr: 10.${self:custom.VpcIpDigit}.2.0/24
   Domain: ${env:APP_DOMAIN}
   DomainHostedZone: ${env:APP_DOMAIN_HOSTED_ZONE}
+  DatabaseVersion: 8.0.mysql_aurora.3.08.1
 
 functions:
   # This function runs the Symfony website/API
@@ -126,15 +127,15 @@ resources:
       Properties:
         BackupRetentionPeriod: 5
         Engine: aurora-mysql
-        EngineVersion: 8.0.mysql_aurora.3.08.1
+        EngineVersion: ${self:custom.DatabaseVersion}
         DatabaseName: app
         DBSubnetGroupName: !Ref DatabaseSubnetGroup
         MasterUsername: !Join [ '', [ '{{resolve:secretsmanager:', !Ref DatabaseCredentials, ':SecretString:username}}' ] ]
         MasterUserPassword: !Join [ '', [ '{{resolve:secretsmanager:', !Ref DatabaseCredentials, ':SecretString:password}}' ] ]
         ServerlessV2ScalingConfiguration:
           MaxCapacity: 8
-          MinCapacity: 0
-          SecondsUntilAutoPause: 300
+          MinCapacity: 0.5
+#          SecondsUntilAutoPause: 300
         StorageEncrypted: true
         VpcSecurityGroupIds:
           - !GetAtt ServerlessVPC.DefaultSecurityGroup
@@ -142,7 +143,7 @@ resources:
       Type: AWS::RDS::DBInstance
       Properties:
         Engine: aurora-mysql
-        EngineVersion: 8.0.mysql_aurora.3.08.1
+        EngineVersion: ${self:custom.DatabaseVersion}
         DBInstanceClass: db.serverless
         DBClusterIdentifier: !Ref DatabaseCluster
     CacheTable:
