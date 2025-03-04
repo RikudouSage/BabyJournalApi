@@ -125,6 +125,7 @@ resources:
     DatabaseCluster:
       Type: AWS::RDS::DBCluster
       Properties:
+        AutoMinorVersionUpgrade: false
         BackupRetentionPeriod: 5
         Engine: aurora-mysql
         EngineVersion: ${self:custom.DatabaseVersion}
