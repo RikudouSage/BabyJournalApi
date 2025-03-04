@@ -135,8 +135,8 @@ resources:
         MasterUserPassword: !Join [ '', [ '{{resolve:secretsmanager:', !Ref DatabaseCredentials, ':SecretString:password}}' ] ]
         ServerlessV2ScalingConfiguration:
           MaxCapacity: 8
-          MinCapacity: 0.5
-#          SecondsUntilAutoPause: 300
+          MinCapacity: 0
+          SecondsUntilAutoPause: 300
         StorageEncrypted: true
         VpcSecurityGroupIds:
           - !GetAtt ServerlessVPC.DefaultSecurityGroup
