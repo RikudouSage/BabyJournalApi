@@ -20,10 +20,10 @@ jobs:
         run: composer install --no-dev --no-scripts
       - name: Warmup cache
         run: php bin/console cache:warmup --env=prod
+      - name: Add serverless
+        run: yarn global add serverless@3
       - name: Deploy
-        uses: serverless/github-action@v3
-        with:
-          args: deploy --stage prod --verbose
+        run: sls deploy --stage prod --verbose
         env:
           AWS_REGION: eu-central-1
           VPC_IP_DIGIT: '15'
@@ -32,9 +32,7 @@ jobs:
           APP_DOMAIN_HOSTED_ZONE: ${{ secrets.APP_DOMAIN_HOSTED_ZONE }}
           APP_DOMAIN: api.baby-journal.app
       - name: Migrations
-        uses: serverless/github-action@v3
-        with:
-          args: bref:cli --stage prod --args="doc:mig:mig -n"
+        run: sls bref:cli --stage prod --args="doc:mig:mig -n"
         env:
           AWS_REGION: eu-central-1
           VPC_IP_DIGIT: '15'
